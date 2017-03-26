@@ -1,5 +1,5 @@
 <?php
-define('BOT_TOKEN', '');
+define('BOT_TOKEN', '349253965:AAHKKOSV7Zs6zRExzeF3AqHuPAug7zYVgWU');
 define('API_URL', 'https://api.telegram.org/bot'.BOT_TOKEN.'/');
 function apiRequestWebhook($method, $parameters) {
   if (!is_string($method)) {
@@ -47,56 +47,48 @@ function exec_curl_request($handle) {
     $response = $response['result'];
   }
   return $response;
-}
-function apiRequest($method, $parameters) {
-  if (!is_string($method)) {
-    error_log("Method name must be a string\n");
-    return false;
-  }
-  if (!$parameters) {
-    $parameters = array();
-  } else if (!is_array($parameters)) {
-    error_log("Parameters must be an array\n");
-    return false;
-  }
-  foreach ($parameters as $key => &$val) {
-    // encoding to JSON array parameters, for example reply_markup
-    if (!is_numeric($val) && !is_string($val)) {
       $val = json_encode($val);
     }
   }
   $url = API_URL.$method.'?'.http_build_query($parameters);
+
   $handle = curl_init($url);
   curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 5);
   curl_setopt($handle, CURLOPT_TIMEOUT, 60);
+
   return exec_curl_request($handle);
 }
+
 function apiRequestJson($method, $parameters) {
   if (!is_string($method)) {
     error_log("Method name must be a string\n");
     return false;
   }
+
   if (!$parameters) {
     $parameters = array();
   } else if (!is_array($parameters)) {
     error_log("Parameters must be an array\n");
     return false;
   }
+
   $parameters["method"] = $method;
+
   $handle = curl_init(API_URL);
   curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 5);
   curl_setopt($handle, CURLOPT_TIMEOUT, 60);
   curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode($parameters));
   curl_setopt($handle, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+
   return exec_curl_request($handle);
 }
 function processMessage($message) {
   // process incoming message
   $boolean = file_get_contents('booleans.txt');
   $booleans= explode("\n",$boolean);
-  $admin = your id;
+  $admin = 193241616;
   $message_id = $message['message_id'];
   $rpto = $message['reply_to_message']['forward_from']['id'];
   $chat_id = $message['chat']['id'];
@@ -107,6 +99,28 @@ function processMessage($message) {
       if ( $chat_id != $admin) {
     	
     	$txt = file_get_contents('banlist.txt');
+$membersid= explode("\n",$txt);
+
+$substr = substr($text, 0, 28);
+	if (!in_array($chat_id,$membersid)) {
+		apiRequest("forwardMessage", array('chat_id' => $admin,  "from_chat_id"=> $chat_id ,"message_id" => $message_id));
+apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => $pmembersiddd[1] ,"parse_mode" =>"HTML"));	
+}else{
+  
+apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => "<b>You Are Banned</b>🚫
+Get Out Of Here Idiot🖕
+--------------------------------
+شما در لیست سیاه قرار دارید 🚫
+لطفا پیام ندهید🖕" ,"parse_mode" =>"HTML"));	
+
+}
+    }
+    else if($rpto !="" && $chat_id==$admin){
+    $photo = $message['photo'];
+    $photoid = json_encode($photo, JSON_PRETTY_PRINT);
+    $photoidd = json_encode($photoid, JSON_PRETTY_PRINT); 
+    $photoidd = str_replace('"[\n    {\n        \"file_id\": \"','',$photoidd);
+    $pos = strpos($photoidd, '",\n');
 $membersid= explode("\n",$txt);
 $substr = substr($text, 0, 28);
 	if (!in_array($chat_id,$membersid)) {
